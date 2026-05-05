@@ -35,13 +35,13 @@ FanPlay is a responsive web application designed to enhance fan engagement durin
 
 ## 🌐 Live Demo
 
-👉 [Live Link Here]
+👉 https://fanplay-ai.netlify.app/
 
 ---
 
 ## 📂 GitHub Repository
 
-👉 [Repo Link Here]
+👉 https://github.com/malimayank/fanplay-ai-app
 
 ---
 
