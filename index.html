@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FanPlay – AI Powered Cricket Engagement Platform</title>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .header-section {
+                grid-column: 1 / -1;
+            }
+
+            .full-width {
+                grid-column: 1 / -1;
+            }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 24px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 10px;
+        }
+
+        /* Header */
+        .header-section {
+            text-align: center;
+            padding: 30px 20px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            background: linear-gradient(to right, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        .header-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+        }
+
+        /* Inputs & Buttons */
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            color: white;
+            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+            transform: scale(1.02);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        /* Scoreboard */
+        .score-display {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+        }
+
+        .score-team {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .score-team-name {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .score-team-runs {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--success);
+        }
+
+        .vs {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            font-style: italic;
+            padding: 0 15px;
+        }
+
+        /* Prediction */
+        .btn-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .btn-outline {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--primary);
+            color: white;
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+        }
+
+        #prediction-result {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+            min-height: 24px;
+            font-size: 1.1rem;
+            transition: opacity 0.3s ease;
+        }
+
+        .text-success {
+            color: var(--success);
+        }
+
+        .text-danger {
+            color: var(--danger);
+        }
+
+        .text-warning {
+            color: #fbbf24;
+        }
+
+        /* Poll */
+        .poll-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .poll-option {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--card-border);
+            padding: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .poll-option:hover {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .poll-bar {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            background: rgba(59, 130, 246, 0.3);
+            width: 0%;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1;
+        }
+
+        .poll-text {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+            font-weight: 500;
+        }
+
+        /* Chat */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 350px;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding-right: 5px;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+
+        .message {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            animation: slideInUp 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            background: var(--primary);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.ai {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--card-border);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .chat-input button {
+            width: auto;
+            padding: 0 20px;
+        }
+
+        /* Commentary */
+        .commentary-box {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-left: 4px solid var(--primary);
+            border-radius: 0 12px 12px 0;
+            font-size: 1.1rem;
+            font-style: italic;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header-section">
+            <h1 class="header-title">🏏 FanPlay</h1>
+            <p class="header-subtitle">Experience Cricket Like Never Before</p>
+        </header>
+
+        <!-- Score Section -->
+        <div class="card full-width">
+            <h2 class="card-title">📊 Live Score Updater</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                <div>
+                    <input type="text" id="team1-name" placeholder="Team 1 Name (e.g. IND)" value="IND">
+                    <input type="text" id="team1-score" placeholder="Team 1 Score (e.g. 150/2)" value="150/2">
+                </div>
+                <div>
+                    <input type="text" id="team2-name" placeholder="Team 2 Name (e.g. AUS)" value="AUS">
+                    <input type="text" id="team2-score" placeholder="Team 2 Score (e.g. 0/0)">
+                </div>
+            </div>
+            <button onclick="updateScore()">🔄 Update Scoreboard</button>
+
+            <div class="score-display">
+                <div class="score-team">
+                    <span class="score-team-name" id="display-t1-name">IND</span>
+                    <span class="score-team-runs" id="display-t1-score">150/2</span>
+                </div>
+                <div class="vs">VS</div>
+                <div class="score-team">
+                    <span class="score-team-name" id="display-t2-name">AUS</span>
+                    <span class="score-team-runs" style="color: var(--danger)" id="display-t2-score">Yet to bat</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Prediction Game -->
+        <div class="card">
+            <h2 class="card-title">🔮 Predict the Next Ball</h2>
+            <p style="color: var(--text-muted); margin-bottom: 15px; font-size: 0.9rem;">What will happen on the next
+                delivery?</p>
+            <div class="btn-group">
+                <button class="btn-outline" onclick="predict('Run')">🏃‍♂️ Run</button>
+                <button class="btn-outline" onclick="predict('Wicket')">☝️ Wicket</button>
+                <button class="btn-outline" onclick="predict('Dot Ball')">⚫ Dot</button>
+            </div>
+            <div id="prediction-result"></div>
+        </div>
+
+        <!-- Fan Poll -->
+        <div class="card">
+            <h2 class="card-title">🗳️ Fan Poll</h2>
+            <p style="color: var(--text-muted); margin-bottom: 15px; font-size: 0.9rem;">Who will win this match?</p>
+            <div class="poll-options">
+                <div class="poll-option" onclick="vote(1)">
+                    <div class="poll-bar" id="poll-bar-1"></div>
+                    <div class="poll-text">
+                        <span id="poll-name-1">Team 1</span>
+                        <span id="poll-pct-1">0%</span>
+                    </div>
+                </div>
+                <div class="poll-option" onclick="vote(2)">
+                    <div class="poll-bar" id="poll-bar-2"></div>
+                    <div class="poll-text">
+                        <span id="poll-name-2">Team 2</span>
+                        <span id="poll-pct-2">0%</span>
+                    </div>
+                </div>
+            </div>
+            <p style="text-align: center; margin-top: 10px; font-size: 0.8rem; color: var(--text-muted);"
+                id="total-votes">Total Votes: 0</p>
+        </div>
+
+        <!-- Commentary Generator -->
+        <div class="card full-width">
+            <h2 class="card-title">🎙️ AI Commentary Generator</h2>
+            <button onclick="generateCommentary()">🎲 Generate Random Commentary</button>
+            <div class="commentary-box" id="commentary-box">
+                "Click the button above to generate some exciting commentary!"
+            </div>
+        </div>
+
+        <!-- AI Chat -->
+        <div class="card full-width">
+            <h2 class="card-title">💬 Fan Zone Chat</h2>
+            <div class="chat-container">
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message ai">Welcome to the Fan Zone! Who are you supporting today? 🏏</div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="chat-input" placeholder="Type your message..."
+                        onkeypress="handleKeyPress(event)">
+                    <button onclick="sendMessage()">Send 🚀</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Score Updater
+        function updateScore() {
+            const t1Name = document.getElementById('team1-name').value || 'Team 1';
+            const t1Score = document.getElementById('team1-score').value || '0/0';
+            const t2Name = document.getElementById('team2-name').value || 'Team 2';
+            const t2Score = document.getElementById('team2-score').value || 'Yet to bat';
+
+            document.getElementById('display-t1-name').innerText = t1Name;
+            document.getElementById('display-t1-score').innerText = t1Score;
+            document.getElementById('display-t2-name').innerText = t2Name;
+            document.getElementById('display-t2-score').innerText = t2Score;
+
+            // Sync poll names
+            document.getElementById('poll-name-1').innerText = t1Name;
+            document.getElementById('poll-name-2').innerText = t2Name;
+        }
+
+        // Initialize poll names on load
+        updateScore();
+
+        // Prediction Game
+        function predict(choice) {
+            const outcomes = ['Run', 'Wicket', 'Dot Ball'];
+            const resultDiv = document.getElementById('prediction-result');
+
+            // UI feedback
+            resultDiv.style.opacity = 0;
+
+            setTimeout(() => {
+                resultDiv.innerHTML = '<span class="text-warning">⏳ Analyzing pitch and bowler...</span>';
+                resultDiv.style.opacity = 1;
+
+                setTimeout(() => {
+                    const actualOutcome = outcomes[Math.floor(Math.random() * outcomes.length)];
+                    resultDiv.style.opacity = 0;
+
+                    setTimeout(() => {
+                        if (choice === actualOutcome) {
+                            resultDiv.innerHTML = `<span class="text-success">🎉 Correct prediction! It was a ${actualOutcome}!</span>`;
+                        } else {
+                            resultDiv.innerHTML = `<span class="text-danger">❌ Unlucky! It was a ${actualOutcome}.</span>`;
+                        }
+                        resultDiv.style.opacity = 1;
+                    }, 200);
+                }, 1000);
+            }, 200);
+        }
+
+        // Fan Poll
+        let totalVotes = 0;
+        let votesT1 = 0;
+        let votesT2 = 0;
+
+        function vote(team) {
+            totalVotes++;
+            if (team === 1) votesT1++;
+            else votesT2++;
+
+            const p1 = Math.round((votesT1 / totalVotes) * 100);
+            const p2 = Math.round((votesT2 / totalVotes) * 100);
+
+            document.getElementById('poll-bar-1').style.width = p1 + '%';
+            document.getElementById('poll-bar-2').style.width = p2 + '%';
+
+            document.getElementById('poll-pct-1').innerText = p1 + '%';
+            document.getElementById('poll-pct-2').innerText = p2 + '%';
+
+            document.getElementById('total-votes').innerText = `Total Votes: ${totalVotes}`;
+        }
+
+        // Commentary Generator
+        function generateCommentary() {
+            const comments = [
+                "And he smashes it down the ground! That's out of the stadium! 🏟️🚀",
+                "Bowled him! The middle stump is out of the ground! What a delivery! ⚡🏏",
+                "Just a quick single. Good sensible running between the wickets. 🏃‍♂️💨",
+                "Oh, dropped! That could cost them the match! Absolute sitter! 😱💔",
+                "Edged and taken! Brilliant diving catch in the slips! 🧤🔥",
+                "Right in the blockhole, magnificent yorker! The batter had no clue! 🎯",
+                "He hits it high in the air... fielder underneath... AND TAKES IT! 👏",
+                "Beautiful cover drive, pierces the gap perfectly for four! 🏏✨"
+            ];
+
+            const box = document.getElementById('commentary-box');
+            box.style.opacity = 0;
+
+            setTimeout(() => {
+                const text = comments[Math.floor(Math.random() * comments.length)];
+                box.innerText = `"${text}"`;
+                box.style.opacity = 1;
+            }, 300);
+        }
+
+        // AI Chat
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            addMessage(msg, 'user');
+            input.value = '';
+
+            // Simulate AI typing delay
+            setTimeout(() => {
+                const replies = [
+                    "What a match we are witnessing! 🔥",
+                    "Kohli would have hit that for a six! 🏏",
+                    "The pitch is definitely turning now.",
+                    "I predict a wicket in the next over! ☝️",
+                    "That was an absolute screamer of a catch! 🧤",
+                    "Need a boundary here to ease the pressure.",
+                    "The run rate is climbing, they need to accelerate!",
+                    "Fantastic spell of bowling this is. 🎯",
+                    "Do you think they can chase this down? 🤔"
+                ];
+
+                // Try to make slightly contextual replies
+                let reply = replies[Math.floor(Math.random() * replies.length)];
+                const lowerMsg = msg.toLowerCase();
+
+                if (lowerMsg.includes('win')) reply = "It's too close to call! But I'm backing the chasing team. 🏆";
+                if (lowerMsg.includes('out') || lowerMsg.includes('wicket')) reply = "Huge moment in the game! That wicket changes everything. ☝️";
+                if (lowerMsg.includes('six') || lowerMsg.includes('four')) reply = "Massive hit! The crowd is going wild! 🚀";
+
+                addMessage(reply, 'ai');
+            }, 1000 + Math.random() * 1000);
+        }
+
+        function addMessage(text, sender) {
+            const chat = document.getElementById('chat-messages');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${sender}`;
+            msgDiv.innerText = text;
+            chat.appendChild(msgDiv);
+            chat.scrollTop = chat.scrollHeight;
+        }
+    </script>
+</body>
+
+</html>
